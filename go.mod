@@ -1,6 +1,6 @@
 module github.com/FiloSottile/whoami.filippo.io
 
-go 1.19
+go 1.25.0
 
 require (
 	crawshaw.io/sqlite v0.3.2

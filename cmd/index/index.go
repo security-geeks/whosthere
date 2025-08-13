@@ -1,5 +1,10 @@
 package main
 
+// sqlite3 -csv input-github.sqlite3 \
+// 		"SELECT user_id, keytype, trim(keydata, unistr('\u000a')) FROM github_keys;" \
+// 		| jq -c -R 'split(",") | {id: .[0] | tonumber, key: "\(.[1]) \(.[2])"}' \
+// 		| pv -l | go run ./cmd/index whoami.sqlite3
+
 import (
 	"crypto/sha256"
 	"encoding/json"
@@ -18,7 +23,8 @@ func main() {
 	}
 	defer conn.Close()
 
-	createQuery := "CREATE TABLE IF NOT EXISTS key_userid (keyHash BLOB PRIMARY KEY, userID INTEGER) WITHOUT ROWID;" // keyHash is SHA-256(key)[:16]
+	// keyHash is SHA-256(bytes.TrimSpace(ssh.MarshalAuthorizedKey(pk)))[:16].
+	createQuery := "CREATE TABLE IF NOT EXISTS key_userid (keyHash BLOB PRIMARY KEY, userID INTEGER) WITHOUT ROWID;"
 	if _, err := conn.Prep(createQuery).Step(); err != nil {
 		log.Fatal(err)
 	}
