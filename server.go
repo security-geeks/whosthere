@@ -63,6 +63,7 @@ func main() {
 	server.sshConfig = &ssh.ServerConfig{
 		KeyboardInteractiveCallback: server.KeyboardInteractiveCallback,
 		PublicKeyCallback:           server.PublicKeyCallback,
+		MaxAuthTries:                32,
 	}
 
 	private, err := ssh.ParsePrivateKey([]byte(os.Getenv("SSH_HOST_KEY")))
